@@ -3,17 +3,17 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext(
-        'quizaccess_guard/nextjs_url',
-        get_string('nextjs_url', 'quizaccess_guard'),
-        get_string('nextjs_url_desc', 'quizaccess_guard'),
-        'https://exam.domain-anda.com',
+        'quizaccess_guard/runner_base_url',
+        'Next.js Runner Base URL',
+        'Masukkan URL aplikasi Next.js (contoh: http://localhost:3000 atau https://exam.sekolah.sch.id)',
+        'http://localhost:3000',
         PARAM_URL
     ));
 
     $settings->add(new admin_setting_configpasswordunmask(
-        'quizaccess_guard/shared_secret',
-        get_string('shared_secret', 'quizaccess_guard'),
-        get_string('shared_secret_desc', 'quizaccess_guard'),
-        ''
+        'quizaccess_guard/secret_key',
+        'HMAC Shared Secret Key',
+        'Kunci rahasia bersama antara Moodle dan Next.js untuk validasi sesi',
+        'default_exam_guard_secret_2026'
     ));
 }
