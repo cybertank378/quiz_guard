@@ -2,45 +2,48 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
-    'quizaccess_guard_lock_student' => [
-        'classname'   => 'quizaccess_guard\external\lock_student_attempt',
+    'quizaccess_guard_get_active_attempts' => [
+        'classname'   => 'quizaccess_guard\external\get_active_attempts',
         'methodname'  => 'execute',
-        'description' => 'Membekukan attempt siswa yang dicurigai mencontek',
-        'type'        => 'write',
-        'ajax'        => false,
-        'capabilities'=> 'mod/quiz:grade',
-    ],
-    'quizaccess_guard_unlock_student' => [
-        'classname'   => 'quizaccess_guard\external\unlock_student_attempt',
-        'methodname'  => 'execute',
-        'description' => 'Membuka kunci pengerjaan kuis siswa oleh pengawas',
-        'type'        => 'write',
-        'ajax'        => false,
-        'capabilities'=> 'mod/quiz:grade',
-    ],
-    'quizaccess_guard_get_teachers' => [
-        'classname'   => 'quizaccess_guard\external\get_teachers',
-        'methodname'  => 'execute',
-        'description' => 'Mengambil daftar guru aktif (editingteacher dan teacher) untuk sinkronisasi pengawas',
+        'description' => 'Mendapatkan daftar siswa yang sedang aktif ujian pada kuis tertentu',
         'type'        => 'read',
-        'ajax'        => false,
-        'capabilities'=> 'mod/quiz:grade',
+        'ajax'        => true,
+        'capabilities'=> 'mod/quiz:viewreports',
     ],
     'quizaccess_guard_get_active_quizzes' => [
         'classname'   => 'quizaccess_guard\external\get_active_quizzes',
         'methodname'  => 'execute',
-        'description' => 'Mengambil daftar kuis yang sedang aktif/berjalan saat ini',
+        'description' => 'Mendapatkan daftar kuis yang sedang aktif dengan aturan guard',
         'type'        => 'read',
-        'ajax'        => false,
-        'capabilities'=> 'mod/quiz:grade',
+        'ajax'        => true,
     ],
-    // --- FUNGSI BARU: Mengambil siswa yang sedang aktif ujian ---
-    'quizaccess_guard_get_active_attempts' => [
-        'classname'   => 'quizaccess_guard\external\get_active_attempts',
+    'quizaccess_guard_lock_student_attempt' => [
+        'classname'   => 'quizaccess_guard\external\lock_student_attempt',
         'methodname'  => 'execute',
-        'description' => 'Mengambil daftar siswa yang sedang aktif mengerjakan kuis beserta nama dan kelasnya',
-        'type'        => 'read',
-        'ajax'        => false,
-        'capabilities'=> 'mod/quiz:grade',
+        'description' => 'Mengunci attempt siswa karena pelanggaran',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'quizaccess_guard_unlock_student_attempt' => [
+        'classname'   => 'quizaccess_guard\external\unlock_student_attempt',
+        'methodname'  => 'execute',
+        'description' => 'Membuka kunci attempt siswa yang terkunci',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+];
+
+// Otomatis daftarkan ke pre-built service Moodle
+$services = [
+    'Quiz Guard Proctor Service' => [
+        'functions' => [
+            'quizaccess_guard_get_active_attempts',
+            'quizaccess_guard_get_active_quizzes',
+            'quizaccess_guard_lock_student_attempt',
+            'quizaccess_guard_unlock_student_attempt',
+        ],
+        'restrictedusers' => 0,
+        'enabled' => 1,
+        'shortname' => 'quizaccess_guard_service',
     ],
 ];
