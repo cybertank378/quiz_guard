@@ -40,7 +40,7 @@ define(['jquery', 'core/ajax'], function($, ajax) {
                                 body: JSON.stringify({
                                     quizId: config.quizId,
                                     userId: config.userId,
-                                    image: frameData,
+                                    screenshotBase64: frameData,
                                     timestamp: new Date().toISOString()
                                 })
                             }).then(function(response) {
@@ -59,3 +59,4 @@ define(['jquery', 'core/ajax'], function($, ajax) {
         }
     };
 });
+
