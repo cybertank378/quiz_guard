@@ -4,8 +4,8 @@ defined('MOODLE_INTERNAL') || die();
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext(
         'quizaccess_guard/runner_base_url',
-        'Next.js Runner Base URL',
-        'Masukkan URL aplikasi Next.js (contoh: http://localhost:3000 atau https://exam.sekolah.sch.id)',
+        'Proctor Runner Base URL',
+        'Masukkan URL aplikasi Proctor (contoh: http://localhost:3000 atau https://exam.sekolah.sch.id)',
         'http://localhost:3000',
         PARAM_URL
     ));

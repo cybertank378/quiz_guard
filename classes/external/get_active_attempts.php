@@ -45,6 +45,7 @@ class get_active_attempts extends external_api {
                     qa.attempt,
                     qa.state,
                     qa.timestart,
+                    qa.timefinish,
                     qa.timemodified
                 FROM {quiz_attempts} qa
                 JOIN {user} u ON u.id = qa.userid
@@ -70,18 +71,20 @@ class get_active_attempts extends external_api {
             }
 
             $results[] = [
-                'attemptid'     => (int)$rec->attemptid,
-                'quizid'        => (int)$rec->quizid,
-                'userid'        => (int)$rec->userid,
-                'username'      => $rec->username,
-                'fullname'      => $fullname,
-                'email'         => $rec->email,
-                'state'         => $rec->state,
+                'attemptId'     => (int)$rec->attemptid,
+                'quizId'        => (int)$rec->quizid,
+                'userId'        => (int)$rec->userid,
+                'studentName'   => $fullname,
+                'className'     => '',
+                'roomNumber'    => '',
+                'status'        => $rec->state,
                 'islocked'      => $islocked,
                 'timestart'     => (int)$rec->timestart,
-                'timemodified'  => (int)$rec->timemodified,
+                'timefinish'    => (int)$rec->timefinish,
             ];
         }
+
+        
 
         return $results;
     }
@@ -89,16 +92,16 @@ class get_active_attempts extends external_api {
     public static function execute_returns() {
         return new external_multiple_structure(
             new external_single_structure([
-                'attemptid'     => new external_value(PARAM_INT, 'Attempt ID'),
-                'quizid'        => new external_value(PARAM_INT, 'Quiz ID'),
-                'userid'        => new external_value(PARAM_INT, 'User ID'),
-                'username'      => new external_value(PARAM_RAW, 'Username siswa'),
-                'fullname'      => new external_value(PARAM_RAW, 'Nama lengkap siswa'),
-                'email'         => new external_value(PARAM_RAW, 'Email siswa'),
-                'state'         => new external_value(PARAM_ALPHA, 'Status ujian (inprogress)'),
+                'attemptId'     => new external_value(PARAM_INT, 'Attempt ID'),
+                'quizId'        => new external_value(PARAM_INT, 'Quiz ID'),
+                'userId'        => new external_value(PARAM_INT, 'User ID'),
+                'studentName'   => new external_value(PARAM_RAW, 'Nama lengkap siswa'),
+                'className'     => new external_value(PARAM_RAW, 'Nama kelas siswa'),
+                'roomNumber'    => new external_value(PARAM_RAW, 'Nomor ruangan', VALUE_OPTIONAL),
+                'status'        => new external_value(PARAM_ALPHA, 'Status ujian (inprogress)'),
                 'islocked'      => new external_value(PARAM_BOOL, 'Apakah kuis terkunci'),
                 'timestart'     => new external_value(PARAM_INT, 'Waktu mulai ujian (timestamp)'),
-                'timemodified'  => new external_value(PARAM_INT, 'Waktu modifikasi/heartbeat terakhir'),
+                'timefinish'    => new external_value(PARAM_INT, 'Waktu selesai (timestamp)'),
             ])
         );
     }
