@@ -66,7 +66,7 @@ class get_active_attempts extends external_api {
             if ($DB->get_manager()->table_exists('quizaccess_guard_locks')) {
                 $islocked = $DB->record_exists('quizaccess_guard_locks', [
                     'attemptid' => $rec->attemptid,
-                    'status' => 'locked',
+                    'islocked' => 1,
                 ]);
             }
 
