@@ -25,7 +25,7 @@ class quizaccess_guard extends quiz_access_rule_base {
         // Jika siswa membuka via browser biasa langsung ke Moodle, blokir dan tampilkan tombol Runner
         $nextjs_url = get_config('quizaccess_guard', 'runner_base_url');
         if (empty($nextjs_url)) {
-            $nextjs_url = 'https://ujian.smpn29jkt.sch.id'; // URL App Next.js Anda
+            $nextjs_url = 'https://proktor.smpn29jkt.sch.id'; // URL App Next.js Anda
         }
 
         $quizid = $this->quiz->id;
