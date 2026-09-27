@@ -25,7 +25,7 @@ class quizaccess_guard extends quiz_access_rule_base {
         // Jika siswa membuka via browser biasa langsung ke Moodle, blokir dan tampilkan tombol Runner
         $nextjs_url = get_config('quizaccess_guard', 'runner_base_url');
         if (empty($nextjs_url)) {
-            $nextjs_url = 'https://proktor.smpn29jkt.sch.id'; // URL App Next.js Anda
+            $nextjs_url = 'http://localhost:3000';
         }
 
         $quizid = $this->quiz->id;
@@ -45,6 +45,34 @@ class quizaccess_guard extends quiz_access_rule_base {
         $html .= '</div>';
 
         return $html;
+    }
+
+    public function setup_attempt_page($page) {
+        global $USER;
+        
+        $quizid = $this->quiz->id;
+        $userid = $USER->id;
+        
+        // Generate Token
+        $secret = get_config('quizaccess_guard', 'secret_key') ?: 'exam_guard_secret';
+        $timestamp = time();
+        $payload = "{$quizid}:{$userid}:{$timestamp}";
+        $signature = hash_hmac('sha256', $payload, $secret);
+        
+        $token = base64_encode("{$payload}:{$signature}");
+        
+        $nextjs_url = get_config('quizaccess_guard', 'runner_base_url');
+        if (empty($nextjs_url)) {
+            $nextjs_url = 'http://localhost:3000';
+        }
+        
+        // Injeksi JS Proctoring
+        $page->requires->js_call_amd('quizaccess_guard/proctoring', 'init', [[
+            'quizId' => $quizid,
+            'userId' => $userid,
+            'token' => $token,
+            'apiBaseUrl' => $nextjs_url
+        ]]);
     }
 
     public function description() {
