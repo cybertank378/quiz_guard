@@ -49,12 +49,18 @@ class get_active_attempts extends external_api {
                     qa.timemodified
                 FROM {quiz_attempts} qa
                 JOIN {user} u ON u.id = qa.userid
+                INNER JOIN (
+                    SELECT userid, MAX(id) AS max_attemptid
+                    FROM {quiz_attempts}
+                    WHERE quiz = :quizid_sub AND state = 'inprogress'
+                    GROUP BY userid
+                ) latest ON latest.max_attemptid = qa.id
                 WHERE qa.quiz = :quizid 
                   AND qa.state = 'inprogress'
                   AND u.deleted = 0
                 ORDER BY qa.timemodified DESC";
 
-        $records = $DB->get_records_sql($sql, ['quizid' => $params['quizid']]);
+        $records = $DB->get_records_sql($sql, ['quizid_sub' => $params['quizid'], 'quizid' => $params['quizid']]);
 
         // Cek status lock pada tabel guard lokal (jika tabel custom guard ada)
         $results = [];
