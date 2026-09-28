@@ -3,7 +3,17 @@ namespace quizaccess_guard\external;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/externallib.php');
+if (file_exists($CFG->libdir . '/externallib.php')) {
+    require_once($CFG->libdir . '/externallib.php');
+}
+if (!class_exists('external_api') && class_exists('core_external\external_api')) {
+    class_alias('core_external\external_api', 'external_api');
+    class_alias('core_external\external_function_parameters', 'external_function_parameters');
+    class_alias('core_external\external_value', 'external_value');
+    class_alias('core_external\external_single_structure', 'external_single_structure');
+    class_alias('core_external\external_multiple_structure', 'external_multiple_structure');
+    class_alias('core_external\external_warnings', 'external_warnings');
+}
 
 use external_api;
 use external_function_parameters;

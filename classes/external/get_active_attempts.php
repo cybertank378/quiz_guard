@@ -3,7 +3,17 @@ namespace quizaccess_guard\external;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/externallib.php');
+if (file_exists($CFG->libdir . '/externallib.php')) {
+    require_once($CFG->libdir . '/externallib.php');
+}
+if (!class_exists('external_api') && class_exists('core_external\external_api')) {
+    class_alias('core_external\external_api', 'external_api');
+    class_alias('core_external\external_function_parameters', 'external_function_parameters');
+    class_alias('core_external\external_value', 'external_value');
+    class_alias('core_external\external_single_structure', 'external_single_structure');
+    class_alias('core_external\external_multiple_structure', 'external_multiple_structure');
+    class_alias('core_external\external_warnings', 'external_warnings');
+}
 
 use external_api;
 use external_function_parameters;
@@ -49,12 +59,18 @@ class get_active_attempts extends external_api {
                     qa.timemodified
                 FROM {quiz_attempts} qa
                 JOIN {user} u ON u.id = qa.userid
+                INNER JOIN (
+                    SELECT userid, MAX(id) AS max_attemptid
+                    FROM {quiz_attempts}
+                    WHERE quiz = :quizid_sub AND state = 'inprogress'
+                    GROUP BY userid
+                ) latest ON latest.max_attemptid = qa.id
                 WHERE qa.quiz = :quizid 
                   AND qa.state = 'inprogress'
                   AND u.deleted = 0
                 ORDER BY qa.timemodified DESC";
 
-        $records = $DB->get_records_sql($sql, ['quizid' => $params['quizid']]);
+        $records = $DB->get_records_sql($sql, ['quizid_sub' => $params['quizid'], 'quizid' => $params['quizid']]);
 
         // Cek status lock pada tabel guard lokal (jika tabel custom guard ada)
         $results = [];
