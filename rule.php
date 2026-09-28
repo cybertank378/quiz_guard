@@ -1,11 +1,19 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
+// Layer kompatibilitas lintas versi (Moodle 3.9 hingga 5.0+)
+if (!class_exists('quiz_access_rule_base') && class_exists('\mod_quiz\local\access_rule_base')) {
+    class_alias('\mod_quiz\local\access_rule_base', 'quiz_access_rule_base');
+}
+if (!class_exists('quiz') && class_exists('\mod_quiz\quiz_settings')) {
+    class_alias('\mod_quiz\quiz_settings', 'quiz');
+}
+
 use quizaccess_guard\rule;
 
 class quizaccess_guard extends quiz_access_rule_base {
 
-    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+    public static function make($quizobj, $timenow, $canignoretimelimits) {
         // Cek apakah guard aktif pada kuis ini
         if (empty($quizobj->get_quiz()->guard_enabled)) {
             return null;
