@@ -57,19 +57,13 @@ class unlock_student_attempt extends external_api {
 
         $lock = $DB->get_record('quizaccess_guard_locks', $conditions);
 
-        if (!$lock) {
-            return [
-                'status'  => false,
-                'message' => 'Data penguncian attempt siswa tidak ditemukan.',
-            ];
+        if ($lock) {
+            // Buka status kunci
+            $lock->islocked     = 0;
+            $lock->unlockedby   = $USER->id;
+            $lock->timemodified = time();
+            $DB->update_record('quizaccess_guard_locks', $lock);
         }
-
-        // Buka status kunci
-        $lock->islocked     = 0;
-        $lock->unlockedby   = $USER->id;
-        $lock->timemodified = time();
-
-        $DB->update_record('quizaccess_guard_locks', $lock);
 
         return [
             'status'  => true,
